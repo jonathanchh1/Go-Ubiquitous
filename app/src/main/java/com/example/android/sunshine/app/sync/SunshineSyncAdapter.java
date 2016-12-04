@@ -36,6 +36,12 @@ import com.example.android.sunshine.app.R;
 import com.example.android.sunshine.app.Utility;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.muzei.WeatherMuzeiSource;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +57,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = SunshineSyncAdapter.class.getSimpleName();
@@ -63,6 +70,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final long DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
     private static final int WEATHER_NOTIFICATION_ID = 3004;
 
+    private static final String WEATHER_PATH = "/weather";
+    private static final String HIGH_TEMPERATURE ="high_temperature";
+    private static final String LOW_TEMPERATURE = "low_temperature";
+    private static final String WEATHER_CONDITION = "weather_condition";
 
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
@@ -146,7 +157,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             Uri builtUri = uriBuilder.appendQueryParameter(FORMAT_PARAM, format)
                     .appendQueryParameter(UNITS_PARAM, units)
                     .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
-                    .appendQueryParameter(APPID_PARAM, BuildConfig.OPEN_WEATHER_MAP_API_KEY)
+                    .appendQueryParameter(APPID_PARAM, BuildConfig.MyOpenWeatherMapApiKey)
                     .build();
 
             URL url = new URL(builtUri.toString());
@@ -369,6 +380,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 updateWidgets();
                 updateMuzei();
                 notifyWeather();
+                notifyWatch();
             }
             Log.d(LOG_TAG, "Sync Complete. " + cVVector.size() + " Inserted");
             setLocationStatus(getContext(), LOCATION_STATUS_OK);
@@ -504,6 +516,46 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
     }
+
+
+    private void notifyWatch(){
+        Context context = getContext();
+
+        String location = Utility.getPreferredLocation(context);
+        Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                location, System.currentTimeMillis());
+
+        //query contentProvider
+        Cursor cursor = context.getContentResolver().query(weatherUri, NOTIFY_WEATHER_PROJECTION, null, null,
+                null);
+        if(cursor == null){
+            return;
+        }
+
+        if(!cursor.moveToFirst()){
+            cursor.close();
+            return;
+        }
+
+        GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(Wearable.API)
+                .build();
+
+        ConnectionResult connectionResult = mGoogleApiClient.blockingConnect(30, TimeUnit.SECONDS);
+        if(!connectionResult.isSuccess()){
+            return;
+        }
+
+        PutDataMapRequest weatherMapRequest = PutDataMapRequest.create(WEATHER_PATH);
+        DataMap weatherDataMap = weatherMapRequest.getDataMap();
+        weatherDataMap.putString(HIGH_TEMPERATURE, Utility.formatTemperature(context, cursor.getDouble(INDEX_MAX_TEMP)));
+        weatherDataMap.putString(LOW_TEMPERATURE, Utility.formatTemperature(context, cursor.getDouble(INDEX_MIN_TEMP)));
+        weatherDataMap.putInt(WEATHER_CONDITION, cursor.getInt(INDEX_WEATHER_ID));
+        PutDataRequest request = weatherMapRequest.asPutDataRequest();
+        Wearable.DataApi.putDataItem(mGoogleApiClient, request);
+    }
+
+
 
     /**
      * Helper method to handle insertion of a new location in the weather database.
