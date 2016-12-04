@@ -47,6 +47,8 @@ import android.widget.TextView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Wearable;
 
 /**
  * Encapsulates fetching the forecast and displaying it as a {@link android.support.v7.widget.RecyclerView} layout.
@@ -58,6 +60,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private boolean mUseTodayLayout, mAutoSelectView;
     private int mChoiceMode;
     private boolean mHoldForTransition;
+    private GoogleApiClient mGoogleApiClient;
     private long mInitialSelectedDate = -1;
 
     private static final String SELECTED_KEY = "selected_position";
@@ -100,6 +103,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
      * implement. This mechanism allows activities to be notified of item
      * selections.
      */
+
+
+
+
+
     public interface Callback {
         /**
          * DetailFragmentCallback for when an item has been selected.
@@ -115,6 +123,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -433,6 +442,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(getString(R.string.pref_location_status_key))) {
             updateEmptyView();
+
         }
     }
 }

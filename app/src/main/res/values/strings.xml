@@ -112,7 +112,7 @@
     <string name="tomorrow">Tomorrow</string>
 
     <!-- Date format [CHAR LIMIT=NONE] -->
-    <string name="format_full_friendly_date"><xliff:g id="month">%1$s</xliff:g>, <xliff:g id="day">%2$s</xliff:g></string>
+    <string name="format_full_friendly_date"><xliff:g id="month">%1$s</xliff:g>, <xliff:g id="day">%2$sF</xliff:g></string>
 
     <!-- Strings for formatting weather-related data -->
     <!-- Temperature format [CHAR LIMIT=5 -->

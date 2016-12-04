@@ -16,10 +16,15 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -35,6 +40,21 @@ import com.example.android.sunshine.app.gcm.RegistrationIntentService;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.CapabilityApi;
+import com.google.android.gms.wearable.CapabilityInfo;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
+import java.io.ByteArrayOutputStream;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
@@ -45,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
 
     private boolean mTwoPane;
     private String mLocation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +128,10 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
                 startService(intent);
             }
         }
+
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -136,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     protected void onResume() {
         super.onResume();
         String location = Utility.getPreferredLocation( this );
-        // update the location in our second pane using the fragment manager
+        //update the location in our second pane using the fragment manager
             if (location != null && !location.equals(mLocation)) {
             ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             if ( null != ff ) {
@@ -149,6 +173,9 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             mLocation = location;
         }
     }
+
+
+
 
     @Override
     public void onItemSelected(Uri contentUri, ForecastAdapter.ForecastAdapterViewHolder vh) {
@@ -196,4 +223,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         }
         return true;
     }
+
+
+
 }
