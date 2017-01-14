@@ -1,35 +1,18 @@
 Advanced Android Sample App
 ===================================
 
-Synchronizes weather information from OpenWeatherMap on Android Phones and Tablets. Used in the Udacity Advanced Android course.
+Go Ubiquitous is the eighth project in Udacity's Android Developer Nanodegree.
 
-Pre-requisites
---------------
-Android SDK 21 or Higher
-Build Tools version 21.1.2
-Android Support AppCompat 22.2.0
-Android Support Annotations 22.2.0
-Android Support GridLayout 22.2.0
-Android Support CardView 22.2.0
-Android Support Design 22.2.0
-Android Support RecyclerView 22.2.0
-Google Play Services GCM 7.0.0
-BumpTech Glide 3.5.2
 
+Udacity Android Developer Nanodegree Project 6. Added a wearable watch face for Sunshine Version 2 app to run on an Android Wear device.
 
 Getting Started
----------------
-This sample uses the Gradle build system.  To build this project, use the
-"gradlew build" command or use "Import Project" in Android Studio.
+Build this project, using either the gradlew build command or using Import Project in Android Studio
 
-Support
--------
+![preview_digital](https://cloud.githubusercontent.com/assets/18495900/21952897/7e43c9ca-d9f6-11e6-8fe8-555db277d146.png)
+![preview_digital_circular](https://cloud.githubusercontent.com/assets/18495900/21952896/7e41f5fa-d9f6-11e6-8d9f-fae6a8d8b451.png)
 
-- Google+ Community: https://plus.google.com/communities/105153134372062985968
-- Stack Overflow: http://stackoverflow.com/questions/tagged/android
 
-Patches are encouraged, and may be submitted by forking this project and
-submitting a pull request through GitHub. Please see CONTRIBUTING.md for more details.
 
 License
 -------
