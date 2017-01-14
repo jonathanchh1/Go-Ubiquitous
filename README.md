@@ -1,4 +1,4 @@
-Advanced Android Sample App
+Go-Ubiquitous!
 ===================================
 
 Go Ubiquitous is the eighth project in Udacity's Android Developer Nanodegree.
